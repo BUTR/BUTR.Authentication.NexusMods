@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 
 using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -114,6 +115,7 @@ namespace BUTR.Authentication.NexusMods.Authentication
                 new Claim(ButrNexusModsClaimTypes.IsPremium, model.IsPremium.ToString()),
                 new Claim(ButrNexusModsClaimTypes.APIKey, model.APIKey),
                 new Claim(ButrNexusModsClaimTypes.Role, model.Role),
+                new Claim(ButrNexusModsClaimTypes.Metadata, string.Join(";", model.Metadata.Select(x => $"{x.Key}={x.Value}"))),
 
                 new Claim(ButrNexusModsClaimTypes.TokenUid, model.TokenUid.ToString()),
                 new Claim(ButrNexusModsClaimTypes.CreationTime, model.CreationTime.ToString("o"))

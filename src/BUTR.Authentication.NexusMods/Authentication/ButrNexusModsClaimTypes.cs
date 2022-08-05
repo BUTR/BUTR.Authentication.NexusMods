@@ -10,6 +10,7 @@
         public const string IsPremium = "NexusMods.IsPremium";
         public const string APIKey = "NexusMods.APIKey";
         public const string Role = "NexusMods.Role";
+        public const string Metadata = "NexusMods.Metadata";
 
         public const string TokenUid = "NexusMods.TokenUid";
         public const string CreationTime = "NexusMods.CreationTime";
