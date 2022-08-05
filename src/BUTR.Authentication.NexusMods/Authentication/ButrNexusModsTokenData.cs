@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace BUTR.Authentication.NexusMods.Authentication
 {
@@ -12,6 +13,7 @@ namespace BUTR.Authentication.NexusMods.Authentication
         public bool IsPremium { get; init; } = default!;
         public string APIKey { get; init; } = default!;
         public string Role { get; init; } = default!;
+        public Dictionary<string, string> Metadata { get; init; } = default!;
 
         public Guid TokenUid { get; init; } = default!;
         public DateTime CreationTime { get; init; } = default!;

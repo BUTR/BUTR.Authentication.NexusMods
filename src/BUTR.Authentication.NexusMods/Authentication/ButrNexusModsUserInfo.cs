@@ -1,4 +1,6 @@
-﻿namespace BUTR.Authentication.NexusMods.Authentication
+﻿using System.Collections.Generic;
+
+namespace BUTR.Authentication.NexusMods.Authentication
 {
     public sealed record ButrNexusModsUserInfo
     {
@@ -10,5 +12,6 @@
         public bool IsPremium { get; init; } = default!;
         public string APIKey { get; init; } = default!;
         public string Role { get; init; } = default!;
+        public Dictionary<string, string> Metadata { get; init; } = default!;
     };
 }

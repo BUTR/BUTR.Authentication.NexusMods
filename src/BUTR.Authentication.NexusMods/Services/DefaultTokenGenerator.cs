@@ -24,7 +24,7 @@ namespace BUTR.Authentication.NexusMods.Services
             _options = options.Value ?? throw new ArgumentNullException(nameof(options));
         }
 
-        public Task<string> GenerateTokenAsync(ButrNexusModsUserInfo userInfo)
+        public Task<GeneratedToken> GenerateTokenAsync(ButrNexusModsUserInfo userInfo)
         {
             var model = new ButrNexusModsTokenData
             {
@@ -36,12 +36,13 @@ namespace BUTR.Authentication.NexusMods.Services
                 IsPremium = userInfo.IsPremium,
                 APIKey = userInfo.APIKey,
                 Role = userInfo.Role,
+                Metadata = userInfo.Metadata,
 
                 TokenUid = Guid.NewGuid(),
                 CreationTime = DateTime.UtcNow,
             };
             var rawToken = JsonSerializer.Serialize(model, _jsonSerializerOptions);
-            return Task.FromResult(CryptographyManager.Encrypt(rawToken, _options.EncryptionKey));
+            return Task.FromResult(new GeneratedToken(CryptographyManager.Encrypt(rawToken, _options.EncryptionKey), model.TokenUid, model.CreationTime));
         }
     }
 }
