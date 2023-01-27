@@ -115,7 +115,7 @@ namespace BUTR.Authentication.NexusMods.Authentication
                 new Claim(ButrNexusModsClaimTypes.IsPremium, model.IsPremium.ToString()),
                 new Claim(ButrNexusModsClaimTypes.APIKey, model.APIKey),
                 new Claim(ButrNexusModsClaimTypes.Role, model.Role),
-                new Claim(ButrNexusModsClaimTypes.Metadata, string.Join(";", model.Metadata?.Select(x => $"{x.Key}={x.Value}") ?? Enumerable.Empty<string>())),
+                new Claim(ButrNexusModsClaimTypes.Metadata, JsonSerializer.Serialize(model.Metadata, _jsonSerializerOptions)),
 
                 new Claim(ButrNexusModsClaimTypes.TokenUid, model.TokenUid.ToString()),
                 new Claim(ButrNexusModsClaimTypes.CreationTime, model.CreationTime.ToString("o"))
