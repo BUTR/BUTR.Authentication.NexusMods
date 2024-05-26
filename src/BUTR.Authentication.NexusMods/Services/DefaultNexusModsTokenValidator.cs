@@ -33,6 +33,7 @@ namespace BUTR.Authentication.NexusMods.Services
             [property: JsonPropertyName("sub")] string UserId,
             [property: JsonPropertyName("name")] string Name,
             [property: JsonPropertyName("email")] string? Email,
+            [property: JsonPropertyName("avatar")] string? AvatarUrl,
             [property: JsonPropertyName("membership_roles")] string[] MembershipRoles);
 
         private readonly HttpClient _httpClient;
@@ -64,8 +65,8 @@ namespace BUTR.Authentication.NexusMods.Services
                 {
                     UserId = uint.Parse(responseType.UserId),
                     Name = responseType.Name,
-                    EMail = responseType.Email ?? "",
-                    ProfileUrl = $"https://www.nexusmods.com/users/{responseType.UserId}",
+                    EMail = responseType.Email,
+                    ProfileUrl = responseType.AvatarUrl,
                     IsSupporter = responseType.MembershipRoles.Contains("supporter"),
                     IsPremium = responseType.MembershipRoles.Contains("supporter"),
                     APIKey = null,

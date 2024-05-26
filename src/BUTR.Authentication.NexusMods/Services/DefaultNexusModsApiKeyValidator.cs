@@ -46,10 +46,10 @@ namespace BUTR.Authentication.NexusMods.Services
             //public bool IsSupporter0 { get; set; } = default!;
 
             [JsonPropertyName("email")]
-            public string Email { get; set; } = default!;
+            public string? Email { get; set; } = default!;
 
             [JsonPropertyName("profile_url")]
-            public string ProfileUrl { get; set; } = default!;
+            public string? ProfileUrl { get; set; } = default!;
 
             [JsonPropertyName("is_supporter")]
             public bool IsSupporter { get; set; } = default!;
