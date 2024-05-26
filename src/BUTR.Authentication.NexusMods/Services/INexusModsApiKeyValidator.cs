@@ -7,8 +7,8 @@ namespace BUTR.Authentication.NexusMods.Services
     /// <summary>
     /// Checks whether the API Key provided is valid.
     /// </summary>
-    public interface INexusModsKeyValidator
+    public interface INexusModsApiKeyValidator
     {
-        Task<NexusModsUserInfo?> ValidateAPIKey(string apiKey);
+        Task<NexusModsUserInfo?> Validate(string apiKey);
     }
 }

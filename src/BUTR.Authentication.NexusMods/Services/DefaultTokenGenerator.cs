@@ -35,6 +35,8 @@ namespace BUTR.Authentication.NexusMods.Services
                 IsSupporter = userInfo.IsSupporter,
                 IsPremium = userInfo.IsPremium,
                 APIKey = userInfo.APIKey,
+                AccessToken = userInfo.AccessToken,
+                RefreshToken = userInfo.RefreshToken,
                 Role = userInfo.Role,
                 Metadata = userInfo.Metadata,
 

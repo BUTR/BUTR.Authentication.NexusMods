@@ -1,6 +1,6 @@
 ﻿namespace BUTR.Authentication.NexusMods.Options
 {
-    public sealed record ButrNexusModsKeyValidatorOptions
+    public sealed record ButrNexusModsApiKeyValidatorOptions
     {
         public string ApiEndpoint { get; set; } = default!;
     }

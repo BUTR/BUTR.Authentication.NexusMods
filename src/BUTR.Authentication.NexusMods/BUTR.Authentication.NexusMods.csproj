@@ -1,8 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
     <Nullable>enable</Nullable>
+    <LangVersion>12</LangVersion>
 
     <ImplicitUsings>false</ImplicitUsings>
 
@@ -42,10 +43,8 @@
   </PropertyGroup>
   <!--SorceLink-->
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\BUTR.NexusMods.Shared\BUTR.NexusMods.Shared.csproj" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="all" />
+    <PackageReference Include="Required" Version="1.0.0" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
   </ItemGroup>
 
 </Project>

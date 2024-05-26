@@ -14,19 +14,19 @@ using System.Threading.Tasks;
 namespace BUTR.Authentication.NexusMods.Services
 {
     /// <summary>
-    /// The default implementation of <see cref="INexusModsKeyValidator"/>. Uses <see cref="ButrNexusModsKeyValidatorOptions"/> for options.
+    /// The default implementation of <see cref="INexusModsApiKeyValidator"/>. Uses <see cref="ButrNexusModsApiKeyValidatorOptions"/> for options.
     /// Needs special configuration. See the example below.
     /// <example>
     /// <code>
-    /// <para/>services.AddHttpClient&lt;INexusModsKeyValidator, NexusModsKeyValidator&gt;().ConfigureHttpClient((sp, client) =>
+    /// <para/>services.AddHttpClient&lt;INexusModsApiKeyValidator, NexusModsApiKeyValidator&gt;().ConfigureHttpClient((sp, client) =>
     /// <para/>{
-    /// <para/>    var opt = sp.GetRequiredService&lt;IOptions&lt;NexusModsKeyValidatorOptions&gt;&gt;().Value;
-    /// <para/>    client.BaseAddress = new Uri(opt.Endpoint);
+    /// <para/>    var opt = sp.GetRequiredService&lt;IOptions&lt;NexusModsApiKeyValidatorOptions&gt;&gt;().Value;
+    /// <para/>    client.BaseAddress = new Uri(opt.ApiEndpoint);
     /// <para/>});
     /// </code>
     /// </example>
     /// </summary>
-    public sealed class NexusModsKeyValidator : INexusModsKeyValidator
+    public sealed class DefaultNexusModsApiKeyValidator : INexusModsApiKeyValidator
     {
         private sealed record NexusModsValidateResponse
         {
@@ -61,13 +61,13 @@ namespace BUTR.Authentication.NexusMods.Services
         private readonly HttpClient _httpClient;
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-        public NexusModsKeyValidator(HttpClient httpClient, IOptions<JsonSerializerOptions> jsonSerializerOptions)
+        public DefaultNexusModsApiKeyValidator(HttpClient httpClient, IOptions<JsonSerializerOptions> jsonSerializerOptions)
         {
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             _jsonSerializerOptions = jsonSerializerOptions.Value ?? throw new ArgumentNullException(nameof(jsonSerializerOptions));
         }
 
-        public async Task<NexusModsUserInfo?> ValidateAPIKey(string apiKey)
+        public async Task<NexusModsUserInfo?> Validate(string apiKey)
         {
             try
             {
@@ -90,6 +90,8 @@ namespace BUTR.Authentication.NexusMods.Services
                     IsSupporter = responseType.IsSupporter,
                     IsPremium = responseType.IsPremium,
                     APIKey = responseType.Key,
+                    AccessToken = null,
+                    RefreshToken = null,
                 };
             }
             catch (Exception)

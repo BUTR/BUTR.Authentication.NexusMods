@@ -9,6 +9,8 @@
         public const string IsSupporter = "NexusMods.IsSupporter";
         public const string IsPremium = "NexusMods.IsPremium";
         public const string APIKey = "NexusMods.APIKey";
+        public const string AccessToken = "NexusMods.AccessToken";
+        public const string RefreshToken = "NexusMods.RefreshToken";
         public const string Role = "NexusMods.Role";
         public const string Metadata = "NexusMods.Metadata";
 

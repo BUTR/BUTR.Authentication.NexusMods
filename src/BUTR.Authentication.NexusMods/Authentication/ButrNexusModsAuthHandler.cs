@@ -8,7 +8,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 
 using System;
-using System.Linq;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Text.Json;
@@ -20,7 +19,8 @@ namespace BUTR.Authentication.NexusMods.Authentication
     {
         private readonly JsonSerializerOptions _jsonSerializerOptions;
         private readonly ITokenBlacklistProvider _tokenBlacklistProvider;
-        private readonly INexusModsKeyValidator _nexusModsKeyValidator;
+        private readonly INexusModsApiKeyValidator _nexusModsApiKeyValidator;
+        private readonly INexusModsTokenValidator _nexusModsTokenValidator;
         private readonly IHostEnvironment _environment;
 
         public ButrNexusModsAuthHandler(
@@ -31,12 +31,14 @@ namespace BUTR.Authentication.NexusMods.Authentication
 
             IOptions<JsonSerializerOptions> jsonSerializerOptions,
             ITokenBlacklistProvider tokenBlacklistProvider,
-            INexusModsKeyValidator nexusModsKeyValidator,
+            INexusModsApiKeyValidator nexusModsApiKeyValidator,
+            INexusModsTokenValidator nexusModsTokenValidator,
             IHostEnvironment environment) : base(options, logger, encoder, clock)
         {
             _jsonSerializerOptions = jsonSerializerOptions.Value ?? throw new ArgumentNullException(nameof(jsonSerializerOptions));
             _tokenBlacklistProvider = tokenBlacklistProvider ?? throw new ArgumentNullException(nameof(tokenBlacklistProvider));
-            _nexusModsKeyValidator = nexusModsKeyValidator ?? throw new ArgumentNullException(nameof(nexusModsKeyValidator));
+            _nexusModsApiKeyValidator = nexusModsApiKeyValidator ?? throw new ArgumentNullException(nameof(nexusModsApiKeyValidator));
+            _nexusModsTokenValidator = nexusModsTokenValidator ?? throw new ArgumentNullException(nameof(nexusModsTokenValidator));
             _environment = environment ?? throw new ArgumentNullException(nameof(environment));
         }
 
@@ -95,15 +97,31 @@ namespace BUTR.Authentication.NexusMods.Authentication
             {
                 return AuthenticateResult.Fail("Token is blacklisted!");
             }
-
-            if (await _nexusModsKeyValidator.ValidateAPIKey(model.APIKey) is not { } validateResponse)
+            
+            if (!string.IsNullOrEmpty(model.APIKey))
             {
-                return AuthenticateResult.Fail("Invalid NexusMods API Key!");
+                if (await _nexusModsApiKeyValidator.Validate(model.APIKey) is not { } userInfo)
+                {
+                    return AuthenticateResult.Fail("Invalid NexusMods API Key!");
+                }
+                
+                if (!Compare(model, userInfo))
+                {
+                    return AuthenticateResult.Fail("NexusMods data has changed!");
+                }
             }
 
-            if (!Compare(model, validateResponse))
+            if (!string.IsNullOrEmpty(model.AccessToken))
             {
-                return AuthenticateResult.Fail("NexusMods data has changed!");
+                if (await _nexusModsTokenValidator.Validate(model.AccessToken, model.RefreshToken) is not { } userInfo)
+                {
+                    return AuthenticateResult.Fail("Invalid NexusMods Access Token!");
+                }
+                
+                if (!Compare(model, userInfo))
+                {
+                    return AuthenticateResult.Fail("NexusMods data has changed!");
+                }
             }
 
             var claims = new[] {
@@ -113,7 +131,9 @@ namespace BUTR.Authentication.NexusMods.Authentication
                 new Claim(ButrNexusModsClaimTypes.ProfileUrl, model.ProfileUrl),
                 new Claim(ButrNexusModsClaimTypes.IsSupporter, model.IsSupporter.ToString()),
                 new Claim(ButrNexusModsClaimTypes.IsPremium, model.IsPremium.ToString()),
-                new Claim(ButrNexusModsClaimTypes.APIKey, model.APIKey),
+                new Claim(ButrNexusModsClaimTypes.APIKey, model.APIKey ?? ""),
+                new Claim(ButrNexusModsClaimTypes.AccessToken, model.AccessToken ?? ""),
+                new Claim(ButrNexusModsClaimTypes.RefreshToken, model.RefreshToken ?? ""),
                 new Claim(ButrNexusModsClaimTypes.Role, model.Role),
                 new Claim(ButrNexusModsClaimTypes.Metadata, JsonSerializer.Serialize(model.Metadata, _jsonSerializerOptions)),
 
@@ -138,6 +158,10 @@ namespace BUTR.Authentication.NexusMods.Authentication
             if (current.IsPremium != nexusModsData.IsPremium)
                 return false;
             if (current.APIKey != nexusModsData.APIKey)
+                return false;
+            if (current.AccessToken != nexusModsData.AccessToken)
+                return false;
+            if (current.RefreshToken != nexusModsData.RefreshToken)
                 return false;
             return true;
         }
